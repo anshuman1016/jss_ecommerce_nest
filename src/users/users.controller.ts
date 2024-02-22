@@ -6,18 +6,25 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
   Res,
   ValidationPipe,
   BadRequestException,
   UseGuards,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateLoginDto } from './dto/create-login.dto';
 import { UsersService } from './users.service';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthorizationGuard } from 'src/auth/authorization.guard';
+import { Roles } from 'src/decorators/roles.decorators';
+
+interface CustomRequest extends Request {
+  user: { id: number; email: string };
+}
 
 @Controller('/user')
 export class UsersController {
@@ -153,9 +160,17 @@ export class UsersController {
     }
   }
 
+  @Roles(['ADMIN'])
+  @UseGuards(AuthGuard, AuthorizationGuard)
   @Get('/all-users')
-  @UseGuards(AuthGuard)
-  findAll() {
+  async findAll(@Req() req: CustomRequest) {
+    // @Req(){user}
+    // console.log(user);
+    const userData = req.user;
+    const findUser = await this.userService.UserRepository.findOne({
+      where: { email: userData.email },
+    });
+    console.log(findUser);
     return this.userService.findAll();
   }
 

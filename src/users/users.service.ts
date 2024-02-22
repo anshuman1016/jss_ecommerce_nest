@@ -34,7 +34,6 @@ export class UsersService {
       where: { email: createUserDto.email },
     });
     if (existingUser) {
-      console.log('yes');
       throw new Error('User already exist with this email');
     } else {
       const createdUser = this.userRepository.create(createUserDto);
@@ -102,7 +101,6 @@ export class UsersService {
     await transporter.sendMail(mailOptions);
   }
 
-  // Reset password
   async resetPassword(email: string, newPassword: string): Promise<void> {
     const user = await this.userRepository.findOne({ where: { email } });
 
@@ -112,7 +110,6 @@ export class UsersService {
       const hashedPassword = await bcrypt.hash(newPassword, salt);
       user.password = hashedPassword;
 
-      // Save the updated user
       await this.userRepository.save(user);
     } else {
       throw new Error('User not found');

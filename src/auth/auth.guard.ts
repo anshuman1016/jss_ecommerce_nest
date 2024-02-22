@@ -6,7 +6,6 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private readonly authService: AuthService) {}
@@ -20,8 +19,7 @@ export class AuthGuard implements CanActivate {
       }
       const authToken = authorization.replace(/bearer/gim, '').trim();
       const resp = await this.authService.validateToken(authToken);
-
-      request.decodedData = resp;
+      request.user = resp;
       return true;
     } catch (error) {
       console.log('auth error - ', error.message);
