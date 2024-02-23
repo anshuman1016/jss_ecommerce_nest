@@ -26,6 +26,13 @@ export class UserEntity {
   @Column({ type: 'varchar', length: 100 })
   password: string;
 
+  @Column({
+    type: 'varchar',
+    default:
+      'http://res.cloudinary.com/dy5jcur4p/image/upload/v1708241442/rbv7pgm8xvbq8myoajax.webp',
+  })
+  imageUrl: string;
+
   @ManyToOne(() => RoleEntity, (role) => role.id, { eager: true })
   @JoinColumn({ name: 'role', referencedColumnName: 'role' })
   role: RoleEntity;

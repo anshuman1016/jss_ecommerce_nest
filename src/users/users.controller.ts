@@ -11,6 +11,11 @@ import {
   ValidationPipe,
   BadRequestException,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { Response, Request } from 'express';
@@ -21,6 +26,8 @@ import { UsersService } from './users.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AuthorizationGuard } from 'src/auth/authorization.guard';
 import { Roles } from 'src/decorators/roles.decorators';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from 'src/utility/cloudinary/cloudinary.service';
 
 interface CustomRequest extends Request {
   user: { id: number; email: string };
@@ -28,7 +35,10 @@ interface CustomRequest extends Request {
 
 @Controller('/user')
 export class UsersController {
-  constructor(private readonly userService: UsersService) {}
+  constructor(
+    private readonly userService: UsersService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Post('create/role')
   async createRole(
@@ -51,11 +61,25 @@ export class UsersController {
   }
 
   @Post('create')
+  @UseInterceptors(FileInterceptor('imageUrl'))
   async create(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 10000 }),
+          new FileTypeValidator({ fileType: 'image' }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
     @Body(new ValidationPipe()) createUserDto: CreateUserDto,
     @Res() res: Response,
   ) {
     try {
+      console.log('file->', file);
+
+      const result = await this.cloudinaryService.uploadSingleFile(file.buffer);
+      createUserDto.imageUrl = result.secure_url;
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
       createUserDto.password = hashedPassword;
@@ -164,8 +188,6 @@ export class UsersController {
   @UseGuards(AuthGuard, AuthorizationGuard)
   @Get('/all-users')
   async findAll(@Req() req: CustomRequest) {
-    // @Req(){user}
-    // console.log(user);
     const userData = req.user;
     const findUser = await this.userService.UserRepository.findOne({
       where: { email: userData.email },

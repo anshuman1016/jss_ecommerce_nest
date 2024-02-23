@@ -35,4 +35,6 @@ export class CreateUserDto {
     message: 'Password should not contain any spaces.',
   })
   password: string;
+
+  imageUrl: string;
 }

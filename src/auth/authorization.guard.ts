@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { ROLES_KEY } from 'src/decorators/roles.decorators';
@@ -16,10 +21,14 @@ export class AuthorizationGuard implements CanActivate {
         context.getHandler(),
       ]);
       const userRole = request.user.role.role;
-      if (requiredRoles[0] !== userRole) {
+      if (!requiredRoles.includes(userRole)) {
         throw new Error('You are not authorized');
       }
       return true;
-    } catch (err) {}
+    } catch (err) {
+      throw new ForbiddenException(
+        err.message || 'session expired! Please sign In',
+      );
+    }
   }
 }

@@ -7,6 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 import { UserEntity } from './users/entities/user.entity';
 import { RoleEntity } from './users/entities/role.entity';
 import { AuthModule } from './auth/auth.module';
+import { VideoModule } from './video/video.module';
+import { VideoEntity } from './video/entities/video.entity';
 
 @Module({
   imports: [
@@ -18,11 +20,12 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [UserEntity, RoleEntity],
+      entities: [UserEntity, RoleEntity, VideoEntity],
       synchronize: true,
     }),
     UsersModule,
     AuthModule,
+    VideoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

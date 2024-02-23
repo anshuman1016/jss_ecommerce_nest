@@ -5,11 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { RoleEntity } from './entities/role.entity';
 import { AuthService } from 'src/auth/auth.service';
+import { CloudinaryService } from 'src/utility/cloudinary/cloudinary.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity, RoleEntity])],
   controllers: [UsersController],
-  providers: [UsersService, AuthService],
+  providers: [UsersService, AuthService, CloudinaryService],
   exports: [UsersService],
 })
 export class UsersModule {}
