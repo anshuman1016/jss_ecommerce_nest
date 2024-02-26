@@ -56,9 +56,21 @@ export class CommentController {
     }
   }
 
-  @Get()
-  findAll() {
-    return this.commentService.findAll();
+  @Get(':videoId')
+  async findAll(@Param('videoId') videoId: string, @Res() res: Response) {
+    try {
+      const comments =
+        await this.commentService.getAllCommentsOnAVideo(videoId);
+      res.status(201).json({
+        success: true,
+        comments: comments,
+      });
+    } catch (err) {
+      res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    }
   }
 
   @Get(':id')

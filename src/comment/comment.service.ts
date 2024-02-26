@@ -34,8 +34,17 @@ export class CommentService {
     return comment;
   }
 
-  findAll() {
-    return `This action returns all comment`;
+  async getAllCommentsOnAVideo(videoId) {
+    const video = await this.videoRepository.find({
+      where: { id: videoId },
+    });
+    if (!video) {
+      throw new Error('Video does not exist');
+    }
+    const comment = await this.commentRepository.find({
+      where: { commented_on: videoId },
+    });
+    return comment;
   }
 
   findOne(id: number) {
