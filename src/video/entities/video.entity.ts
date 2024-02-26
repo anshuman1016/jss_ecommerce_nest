@@ -8,7 +8,6 @@ import {
   //   OneToMany,
 } from 'typeorm';
 import { UserEntity } from 'src/users/entities/user.entity';
-// import { CommentEntity } from 'src/comment/entities/comment.entity';
 
 export enum VideoType {
   PAID = 'PAID',
@@ -38,13 +37,12 @@ export class VideoEntity {
   //   @OneToMany(() => CommentEntity, (comment) => comment)
   //   comments: CommentEntity[];
 
-  @ManyToOne(() => UserEntity, (user) => user.id)
-  @JoinColumn({ name: 'createdBy', referencedColumnName: 'id' })
+  @Column({ type: 'varchar' })
   createdBy: number;
 
-  //   @OneToOne(() => UserEntity, (user) => user.id)
-  //   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  //   user: UserEntity;
+  @ManyToOne(() => UserEntity, (user) => user.id)
+  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
+  user_id: UserEntity;
 
   @Column({ default: () => 'CURRENT_TIMESTAMP', nullable: true })
   createdAt: Date;

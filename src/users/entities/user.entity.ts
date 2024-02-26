@@ -37,6 +37,9 @@ export class UserEntity {
   @JoinColumn({ name: 'role', referencedColumnName: 'role' })
   role: RoleEntity;
 
+  @Column({ type: 'varchar', nullable: true, array: true })
+  blocked_users: number[];
+
   @CreateDateColumn()
   created_at: Date;
 

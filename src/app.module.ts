@@ -9,6 +9,10 @@ import { RoleEntity } from './users/entities/role.entity';
 import { AuthModule } from './auth/auth.module';
 import { VideoModule } from './video/video.module';
 import { VideoEntity } from './video/entities/video.entity';
+import { BlockedUsersModule } from './blocked-users/blocked-users.module';
+import { BlockedUserEntity } from './blocked-users/entities/blocked-user.entity';
+import { CommentModule } from './comment/comment.module';
+import { CommentEntity } from './comment/entities/comment.entity';
 
 @Module({
   imports: [
@@ -20,12 +24,20 @@ import { VideoEntity } from './video/entities/video.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [UserEntity, RoleEntity, VideoEntity],
+      entities: [
+        UserEntity,
+        RoleEntity,
+        VideoEntity,
+        BlockedUserEntity,
+        CommentEntity,
+      ],
       synchronize: true,
     }),
     UsersModule,
     AuthModule,
     VideoModule,
+    BlockedUsersModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

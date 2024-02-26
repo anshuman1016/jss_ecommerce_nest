@@ -76,16 +76,11 @@ export class VideoController {
   @Get('get-allVideos')
   async findAll(@Req() req: CustomRequest, @Res() res: Response) {
     try {
-      const findUser = await this.userService.UserRepository.findOne({
-        where: { email: req.user.email },
-      });
-      if (!findUser) {
-        throw new Error('User does not exist!');
-      }
-      const allVideos = await this.videoService.findAll();
-      res.status(200).json({
+      const { email } = req.user;
+      const all_videos = await this.videoService.findAllVideos(email);
+      res.status(201).json({
         success: true,
-        videos: allVideos,
+        videos: all_videos,
       });
     } catch (err) {
       res.status(400).json({
@@ -106,7 +101,7 @@ export class VideoController {
       if (!findUser) {
         throw new Error('User does not exist!');
       }
-      const video = await this.videoService.findOne(+findUser.id);
+      const video = await this.videoService.findVideo(req.user.id);
       res.status(200).json({
         success: true,
         videos: video,

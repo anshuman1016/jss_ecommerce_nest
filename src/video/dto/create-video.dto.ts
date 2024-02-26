@@ -22,4 +22,6 @@ export class CreateVideoDto {
   isVideoType: VideoType;
 
   createdBy: number;
+
+  user_id: UserEntity;
 }
